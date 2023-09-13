@@ -1,60 +1,66 @@
-import React, { useEffect, useState } from 'react'
-import Country from './Country'
+import { useEffect } from "react"
+import { useState } from "react"
+import Country from "./Country"
 
 const Countries = () => {
 
-    // one
-    const [country, setCountry] = useState([])
+    const [countries, setCountries] = useState([])
     useEffect(() => {
         fetch('https://restcountries.com/v3.1/all')
             .then(res => res.json())
-            .then(data => setCountry(data))
+            .then(data => setCountries(data))
     }, [])
-    // console.log(country)
+    // console.log(countries)
 
-    // two
-    const [visitedCountry, setVisitedCountry] = useState([]);
-    const handleVisitedCountry = (name) => {
-    //    console.log(name)
-
-       let newArray = [...visitedCountry, name]
-       setVisitedCountry(newArray)
-    }
-    // console.log(visitedCountry)
-
-    // three
-    const [flags, setFlag] = useState([])
-    const handleFlag = (flag) =>{
-        // console.log(flag)
-        let newArray = [...flags, flag];
-        setFlag(newArray);
+    const [visited, setVisited] = useState([])
+    const handleVisit = (data) => {
+        // console.log(data)
+        let newArray = [...visited, data]
+        setVisited(newArray);
     }
 
+    const handleDelVisited = (data) => {
+        let newVisited = visited.filter(visit => visit !== data)
+        setVisited(newVisited)
+    }
+
+
+    const [flags, setFlags] = useState([])
+    const HandleFlag = (data) => {
+        // console.log(data)
+        let newArray = [...flags, data]
+        setFlags(newArray)
+    }
     // console.log(flags)
 
+    const handleDelFlag = (data) => {
+        let newArray = flags.filter(flag => flag !== data);
+        setFlags(newArray)
+    }
+
     return (
-        <>
-            <div className='py-5'>
-                <h1 className='text-center text-2xl font-bold'>React world tour</h1>
-                <h1 className='text-center text-xl '>Countries : {country.length}</h1>
+        <div className="space-y-5">
+            <h1 className="text-center font-bold text-2xl mt-2">React World Tour</h1>
+            <h3 className="text-center font-bold">Countries : {countries.length}</h3>
+
+            <div className="text-center font-bold">
+                <h3 className="underline">Visited Country : {visited.length}</h3>
+                <div className="space-y-2">{visited.map((visit, index) => <div className="flex items-center justify-center gap-5" key={index}><p >{`${index + 1} ${visit}`}</p>
+                    <button className="border px-2 rounded-lg text-gray-500" onClick={() => handleDelVisited(visit)}>del</button>
+                </div>)}</div>
             </div>
-            <div className='text-center'>
-                <h1 className='font-bold'>Visited Country</h1>
-                <div>
-                    {visitedCountry.map((name, index) => <p key={index}>{name}</p>)}
+
+            <div className="text-center font-bold">
+                <h3 className="underline">Visited Flag : {flags.length}</h3>
+                <div className="flex justify-center gap-5 mt-2">
+                    {flags.map((flag, index) => <img className="h-[50px] cursor-pointer" key={index} src={flag} onClick={() => handleDelFlag(flag)}></img>)}
                 </div>
             </div>
-            <div className='text-center mt-5'>
-                <h1 className='font-bold'>Visited Flags</h1>
-                <div className='flex items-center justify-center space-x-3'>
-                    {flags.map((flag, index) => <img key={index} className='w-16 h-10' src={flag}></img>)}
-                </div>
+
+            <div className="grid gap-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-[90%] mx-auto text-center">
+                {countries.map((country, index) => <Country key={index} country={country} handleVisit={handleVisit} HandleFlag={HandleFlag} />)}
             </div>
-            
-            <div className='grid grid-cols-1 text-center md:grid-cols-2 lg:grid-cols-3 w-[90%] mx-auto gap-x-5'>
-                {country.map((county, index) => <Country key={index} country={county} handleVisitedCountry={handleVisitedCountry} handleFlag={handleFlag}/>)}
-            </div>
-        </>
+        </div>
     )
 }
 
